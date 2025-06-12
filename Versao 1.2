@@ -43,50 +43,48 @@ int main(){
 
    
    
-   do{
-    cout << "---------- BIBLIOTECA ----------" << endl;
-    cout << "1. Cadastrar Usuario" << endl;
-    cout << "2. Cadastrar Livro" << endl;
-    cout << "3. Consultar livros disponiveis" << endl;
-    cout << "4. Emprestar livro" << endl;
-    cout << "5. Devolver livro" << endl;
-    cout << "6. Historico de emprestimo" << endl;
-    cout << "7. Sair" << endl;
-    cout << "\nEscolha a opção: ";
-    cin >> opcao;
-
-  
-    
-    cout <<'\n';
-    
-    
-    if(opcao == 1 ){
-        if(qtd_usuario < TAM){
-            cin.ignore();
-            cout << "Nome: ";
-            getline(cin, usuario[qtd_usuario].nome);
-            cout << "Id unico: ";
-            cin >> usuario[qtd_usuario].id;
-            cin.ignore();
-            cout <<'\n';
+    do{
+        'cout << "-------------- BIBLIOTECA ------------" << endl;
+        cout << "|1 - Cadastrar Usuario               |" << endl;
+        cout << "|2 - Cadastrar Livro                 |" << endl;
+        cout << "|3 - Consultar livros disponiveis    |" << endl;
+        cout << "|4 - Emprestar livro                 |" << endl;
+        cout << "|5 - Devolver livro                  |" << endl;
+        cout << "|6 - Historico de emprestimo         |" << endl;
+        cout << "|7 - Sair                            |" << endl;
+        cout << "--------------------------------------" << endl;
+        cout << "\nEscolha a opção: ";
+        cin >> opcao;
+        
+        cout <<'\n';
+        
+        if(opcao == 1 ){
+            if(qtd_usuario < TAM){
+                cin.ignore();
+                cout << "Nome: ";
+                getline(cin, usuario[qtd_usuario].nome);
+                cout << "Id unico: ";
+                cin >> usuario[qtd_usuario].id;
+                cin.ignore();
+                cout <<'\n';
+               
+           }
+        }
+        
+        if(opcao == 2){
+            cadastrarLivro(todosOsLivros,i);
+        }
            
-       }
-    }
-    if(opcao == 2){
-        cadastrarLivro(todosOsLivros,i);
-    }
-       
-    if(opcao == 7){
-        cout <<"\nEncerrando programa..." << endl;
-        break;
-     }  
+        if(opcao == 7){
+            cout <<"\nEncerrando programa..." << endl;
+            break;
+        }  
+         
        
        
        
        
-       
-   }
-    while (opcao != 7);
+    } while (opcao != 7);
 
     return 0;
 }
