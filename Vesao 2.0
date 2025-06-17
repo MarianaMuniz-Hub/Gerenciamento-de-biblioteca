@@ -1,0 +1,229 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <cctype>
+
+using namespace std;
+
+const int TAM = 100;
+
+struct Usuario {
+    string nome;
+    string id;
+};
+
+struct Livro {
+    string titulo;
+    string autor;
+    string idLivro;
+    int qtdDisponivel;
+    int qtdEmprestimos = 0;
+};
+
+Usuario listaUsuario[TAM];
+Livro todosOsLivros[TAM];
+int totalUsuarios = 0;
+int totalLivros = 0;
+
+string gerarID() {
+    string caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
+    string id = "";
+    for (int i = 0; i < 9; i++) {
+        id += caracteres[rand() % caracteres.size()];
+    }
+    return id;
+}
+
+void cadastrarUsuario() {
+    if (totalUsuarios < TAM) {
+        cin.ignore();
+        cout << "Nome do usuário: ";
+        getline(cin, listaUsuario[totalUsuarios].nome);
+        listaUsuario[totalUsuarios].id = gerarID();
+        cout << "ID gerado para o usuário: " << listaUsuario[totalUsuarios].id << endl;
+        totalUsuarios++;
+    } else {
+        cout << "Limite de usuários atingido.\n";
+    }
+}
+
+void cadastrarLivro() {
+    if (totalLivros < TAM) {
+        cin.ignore();
+        cout << "Título do livro: ";
+        getline(cin, todosOsLivros[totalLivros].titulo);
+        cout << "Autor do livro: ";
+        getline(cin, todosOsLivros[totalLivros].autor);
+        todosOsLivros[totalLivros].idLivro = gerarID();
+        cout << "ID gerado para o livro: " << todosOsLivros[totalLivros].idLivro << endl;
+        cout << "Quantidade disponível: ";
+        cin >> todosOsLivros[totalLivros].qtdDisponivel;
+        totalLivros++;
+    } else {
+        cout << "Limite de livros atingido.\n";
+    }
+}
+
+int verificarUsuario(string nome, string id) {
+    for (int i = 0; i < totalUsuarios; i++) {
+        if (listaUsuario[i].nome == nome && listaUsuario[i].id == id) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void emprestarLivro() {
+    cin.ignore();
+    string nome;
+    string id;
+    cout << "Digite seu nome de usuário: ";
+    getline(cin, nome);
+    cout << "Digite seu ID: ";
+    getline(cin, id);
+
+    int indiceUsuario = verificarUsuario(nome, id);
+
+    if (indiceUsuario != -1) {
+        string buscaID;
+        cout << "Digite o ID do livro que deseja emprestar: ";
+        getline(cin, buscaID);
+
+        bool encontrado = false;
+        for (int i = 0; i < totalLivros; i++) {
+            if (todosOsLivros[i].idLivro == buscaID) {
+                encontrado = true;
+                if (todosOsLivros[i].qtdDisponivel > 0) {
+                    todosOsLivros[i].qtdDisponivel--;
+                    todosOsLivros[i].qtdEmprestimos++;
+                    cout << "Livro \"" << todosOsLivros[i].titulo << "\" emprestado com sucesso.\n";
+                } else {
+                    cout << "Livro indisponível no momento.\n";
+                }
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            cout << "Livro com ID " << buscaID << " não encontrado.\n";
+        }
+
+    } else {
+        cout << "Usuário não encontrado. Verifique o nome e ID.\n";
+    }
+}
+
+void consultarLivros() {
+    int op;
+    cout << "1 - Ver todos os livros\n2 - Consultar por ID\nEscolha: ";
+    cin >> op;
+
+    if (op == 1) {
+        for (int i = 0; i < totalLivros; i++) {
+            cout << "\nTítulo: " << todosOsLivros[i].titulo;
+            cout << "\nAutor: " << todosOsLivros[i].autor;
+            cout << "\nID: " << todosOsLivros[i].idLivro;
+            cout << "\nQuantidade disponível: " << todosOsLivros[i].qtdDisponivel;
+            cout << "\nStatus: " << (todosOsLivros[i].qtdDisponivel > 0 ? "Disponível" : "Emprestado");
+            cout << "\nJá foi emprestado " << todosOsLivros[i].qtdEmprestimos << " vez(es)";
+            cout << "\n-----------------------------";
+        }
+    } else if (op == 2) {
+        cin.ignore();
+        string idBusca;
+        cout << "Digite o ID do livro: ";
+        getline(cin, idBusca);
+
+        bool achou = false;
+        for (int i = 0; i < totalLivros; i++) {
+            if (todosOsLivros[i].idLivro == idBusca) {
+                cout << "\nLivro encontrado:\n";
+                cout << "Título: " << todosOsLivros[i].titulo << endl;
+                cout << "Autor: " << todosOsLivros[i].autor << endl;
+                cout << "Quantidade disponível: " << todosOsLivros[i].qtdDisponivel << endl;
+                cout << "Status: " << (todosOsLivros[i].qtdDisponivel > 0 ? "Disponível" : "Emprestado") << endl;
+                cout << "Já foi emprestado " << todosOsLivros[i].qtdEmprestimos << " vez(es)" << endl;
+                achou = true;
+                break;
+            }
+        }
+
+        if (!achou) {
+            cout << "Livro com ID " << idBusca << " não encontrado.\n";
+        }
+    } else {
+        cout << "Opção inválida.\n";
+    }
+}
+
+void listarStatusLivros() {
+    cout << "\n===== LIVROS DISPONÍVEIS =====" << endl;
+    bool temDisponiveis = false;
+
+    for (int i = 0; i < totalLivros; i++) {
+        if (todosOsLivros[i].qtdDisponivel > 0) {
+            cout << "Título: " << todosOsLivros[i].titulo << endl;
+            cout << "Autor: " << todosOsLivros[i].autor << endl;
+            cout << "ID: " << todosOsLivros[i].idLivro << endl;
+            cout << "Disponíveis: " << todosOsLivros[i].qtdDisponivel << endl;
+            cout << "Total de empréstimos: " << todosOsLivros[i].qtdEmprestimos << endl;
+            cout << "--------------------------" << endl;
+            temDisponiveis = true;
+        }
+    }
+
+    if (!temDisponiveis) {
+        cout << "Nenhum livro disponível no momento.\n";
+    }
+
+    cout << "\n===== LIVROS EMPRESTADOS =====" << endl;
+    bool temEmprestados = false;
+
+    for (int i = 0; i < totalLivros; i++) {
+        if (todosOsLivros[i].qtdEmprestimos > 0) {
+            cout << "Título: " << todosOsLivros[i].titulo << endl;
+            cout << "Autor: " << todosOsLivros[i].autor << endl;
+            cout << "ID: " << todosOsLivros[i].idLivro << endl;
+            cout << "Disponíveis: " << todosOsLivros[i].qtdDisponivel << endl;
+            cout << "Total de empréstimos: " << todosOsLivros[i].qtdEmprestimos << endl;
+            cout << "Status: " << (todosOsLivros[i].qtdDisponivel > 0 ? "Parcialmente disponível" : "Emprestado") << endl;
+            cout << "--------------------------" << endl;
+            temEmprestados = true;
+        }
+    }
+
+    if (!temEmprestados) {
+        cout << "Nenhum livro foi emprestado até o momento.\n";
+    }
+}
+
+int main() {
+    srand(time(0));
+
+    int opcao;
+    do {
+        cout << "\n========= MENU BIBLIOTECA =========\n";
+        cout << "1. Cadastrar usuário\n";
+        cout << "2. Cadastrar livro\n";
+        cout << "3. Consultar livros\n";
+        cout << "4. Emprestar livro\n";
+        cout << "5. Sair\n";
+        cout << "6. Ver status dos livros\n";
+        cout << "===================================\n";
+        cout << "Escolha: ";
+        cin >> opcao;
+
+        switch (opcao) {
+            case 1: cadastrarUsuario(); break;
+            case 2: cadastrarLivro(); break;
+            case 3: consultarLivros(); break;
+            case 4: emprestarLivro(); break;
+            case 5: cout << "Saindo do sistema...\n"; break;
+            case 6: listarStatusLivros(); break;
+            default: cout << "Opção inválida.\n"; break;
+        }
+    } while (opcao != 5);
+
+    return 0;
+}
